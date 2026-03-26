@@ -1,49 +1,68 @@
 App Metrics CLI API
 
-API para gestión de aplicaciones, desarrollada en Python con FastAPI y GraphQL.
-Permite agregar, listar y consultar aplicaciones mediante REST y GraphQL, ideal para integraciones en pipelines CI/CD, dashboards internos o herramientas de monitoreo de aplicaciones.
+Servicio backend simple para gestionar información de aplicaciones.
 
-Tecnologías usadas
+Este proyecto expone una API construida con FastAPI y GraphQL que permite registrar y consultar aplicaciones.
+Puede utilizarse como un pequeño servicio interno para pipelines CI/CD, dashboards o herramientas de monitoreo.
+
+Tecnologías
 Python 3.12
-FastAPI – Framework web moderno para APIs REST
-SQLite – Base de datos ligera embebida
-Strawberry – Integración de GraphQL con Python
-Pydantic – Validación y serialización de datos
-Requests – Cliente HTTP para pruebas
-Uvicorn – Servidor ASGI para FastAPI
-
-Opcional para DevOps y despliegues:
-
-Docker
-GitHub Actions / GitLab CI para integración continua
+FastAPI
+GraphQL (Strawberry)
+SQLite
+Pydantic
+Uvicorn
+Requests (para pruebas)
 Funcionalidades
-Agregar aplicaciones con name, version y status.
-Listar aplicaciones desde REST (/apps/) o GraphQL (/graphql).
-Consultas GraphQL para obtener información estructurada de las apps.
-Arquitectura modular, lista para ampliar con más endpoints, servicios o integraciones.
-Pruebas automatizadas con scripts Python (test_api.py) para validar la API.
-Instalación y ejecución
+Registrar aplicaciones con nombre, versión y estado
+Consultar aplicaciones mediante API REST
+Consultar aplicaciones mediante GraphQL
+Base de datos ligera con SQLite
+Script simple de pruebas automatizadas
+Estructura modular fácil de extender
+Estructura del Proyecto
+app-metrics-cli/
+│
+├── api/
+│   ├── main.py        # Aplicación FastAPI
+│   ├── db.py          # Inicialización de SQLite
+│   └── models.py      # Modelos de datos
+│
+├── services/          # Lógica de negocio
+├── test_api.py        # Script de pruebas de la API
+├── requirements.txt
+└── README.md
+Instalación
+
 Clonar el repositorio:
-# Con SSH
-git clone git@github.com:DarioOrtiz/app-metrics-cli.git
-# Con HTTPS
+
 git clone https://github.com/DarioOrtiz/app-metrics-cli.git
 cd app-metrics-cli
-Crear un entorno virtual:
+
+Crear entorno virtual:
+
 python3 -m venv venv
 source venv/bin/activate
+
 Instalar dependencias:
+
 pip install fastapi uvicorn strawberry-graphql requests
-Inicializar la base de datos (SQLite):
+
+Inicializar base de datos:
+
 python3 -c "from api import db"
-Ejecutar la API localmente:
+
+Ejecutar la API:
+
 uvicorn api.main:app --reload
-REST disponible en: http://127.0.0.1:8000/apps/
-GraphQL playground en: http://127.0.0.1:8000/graphql
-Endpoints
+Endpoints de la API
 REST
 
-POST /apps/ – Agregar una app
+Agregar aplicación
+
+POST /apps/
+
+Ejemplo de request:
 
 {
   "name": "MiApp",
@@ -51,7 +70,11 @@ POST /apps/ – Agregar una app
   "status": "active"
 }
 
-GET /apps/ – Listar todas las apps
+Listar aplicaciones
+
+GET /apps/
+
+Ejemplo de respuesta:
 
 [
   {
@@ -62,8 +85,14 @@ GET /apps/ – Listar todas las apps
   }
 ]
 GraphQL
-POST /graphql – Consultas GraphQL
-{
+
+Endpoint:
+
+POST /graphql
+
+Ejemplo de consulta:
+
+query {
   apps {
     id
     name
@@ -71,22 +100,21 @@ POST /graphql – Consultas GraphQL
     status
   }
 }
-Pruebas automatizadas
 
-Se incluye un script de prueba test_api.py que:
+Playground disponible en:
 
-Agrega varias apps
-Lista apps usando REST
-Consulta apps usando GraphQL
+http://127.0.0.1:8000/graphql
+Pruebas Automatizadas
 
-Ejecutar:
+El proyecto incluye un script de pruebas:
 
-python3 test_api.py
-Integración en pipelines CI/CD
-Docker: Puedes dockerizar la API para pruebas o despliegues automáticos.
-GitHub Actions / GitLab CI: Automatiza pruebas del script test_api.py en cada commit.
-Monitoreo: Con REST y GraphQL puedes integrar métricas de apps a dashboards internos o sistemas de alertas.
-Contribuciones
+test_api.py
+
+Este script realiza:
+
+Creación de aplicaciones
+Consulta de aplicaciones vía REST
+Consulta de aplicaciones vía GraphQL
 
 Proyecto modular y extensible:
 
