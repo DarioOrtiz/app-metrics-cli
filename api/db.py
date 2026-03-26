@@ -1,6 +1,7 @@
 import sqlite3
 
 conn = sqlite3.connect("apps.db", check_same_thread=False)
+
 cur = conn.cursor()
 cur.execute("""
 CREATE TABLE IF NOT EXISTS apps (
@@ -11,3 +12,4 @@ CREATE TABLE IF NOT EXISTS apps (
 )
 """)
 conn.commit()
+cur.close()
