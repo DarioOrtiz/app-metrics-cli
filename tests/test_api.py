@@ -1,6 +1,4 @@
-# test_api.py
 import requests
-import json
 
 REST_URL = "http://127.0.0.1:8000/apps/"
 GRAPHQL_URL = "http://127.0.0.1:8000/graphql"
@@ -44,16 +42,13 @@ def listar_apps_graphql():
         for a in apps:
             print(f"- {a['id']}: {a['name']} ({a['version']}) - {a['status']}")
     else:
-        print(f"❌ Error fetching apps: {r.text}")
+        print(f" Error fetching apps: {r.text}")
 
 
 if __name__ == "__main__":
-
     agregar_app("MiApp", "1.0", "active")
     agregar_app("TestApp", "2.3", "inactive")
     agregar_app("DemoApp", "0.9", "active")
 
-
     listar_apps_rest()
-
     listar_apps_graphql()

@@ -1,7 +1,8 @@
 import strawberry
 from typing import List
-from .models import App
 from .db import SessionLocal
+from .models import App
+
 
 @strawberry.type
 class AppType:
@@ -10,16 +11,24 @@ class AppType:
     version: str
     status: str
 
-def get_apps() -> List[AppType]:
-    db = SessionLocal()
-    try:
+
+def get_apps_resolver() -> List[AppType]:
+    with SessionLocal() as db:
         apps = db.query(App).all()
-        return [AppType(id=a.id, name=a.name, version=a.version, status=a.status) for a in apps]
-    finally:
-        db.close()
+        return [
+            AppType(
+                id=a.id,
+                name=a.name,
+                version=a.version,
+                status=a.status
+            )
+            for a in apps
+        ]
+
 
 @strawberry.type
 class Query:
-    apps: List[AppType] = strawberry.field(resolver=get_apps)
+    apps: List[AppType] = strawberry.field(resolver=get_apps_resolver)
 
-schema = strawberry.Schema(Query)
+
+schema = strawberry.Schema(query=Query)
