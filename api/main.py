@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from .db import SessionLocal, Base, engine
 from .models import App
 from .schemas import AppCreate, AppRead
+from .graphql import schema
+from strawberry.fastapi import GraphQLRouter
 
 app = FastAPI(title="App Metrics CLI API")
 
@@ -28,3 +30,7 @@ def add_app(app: AppCreate, db: Session = Depends(get_db)):
 def list_apps(db: Session = Depends(get_db)):
     apps = db.query(App).all()
     return apps
+
+
+graphql_app = GraphQLRouter(schema)
+app.include_router(graphql_app, prefix="/graphql")
