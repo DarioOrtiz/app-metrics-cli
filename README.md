@@ -116,9 +116,10 @@ Creación de aplicaciones
 Consulta de aplicaciones vía REST
 Consulta de aplicaciones vía GraphQL
 
-Proyecto modular y extensible:
+## Posibles mejoras futuras
 
-Agregar nuevos endpoints REST/GraphQL
-Integrar con bases de datos externas
-Añadir autenticación y autorización
-Integrar pruebas automáticas en pipelines DevOps
+- Integración con PostgreSQL en lugar de SQLite para producción.
+- Autenticación y autorización mediante JWT.
+- Dockerización del servicio para facilitar despliegue y entornos consistentes.
+- Métricas y monitoreo con Prometheus.
+- Integración en pipelines CI/CD para despliegue automático y pruebas.

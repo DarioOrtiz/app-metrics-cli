@@ -1,15 +1,13 @@
-import sqlite3
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-conn = sqlite3.connect("apps.db", check_same_thread=False)
 
-cur = conn.cursor()
-cur.execute("""
-CREATE TABLE IF NOT EXISTS apps (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    version TEXT NOT NULL,
-    status TEXT NOT NULL
+SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://dario:metrics1234@localhost:5432/app_metrics_db"
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    echo=True  
 )
-""")
-conn.commit()
-cur.close()
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
