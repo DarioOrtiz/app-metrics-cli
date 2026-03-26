@@ -1,6 +1,8 @@
 import strawberry
 from typing import List
-from .db import conn
+from sqlalchemy.orm import Session
+from .db import SessionLocal
+from .models import App
 
 
 @strawberry.type
@@ -10,15 +12,16 @@ class AppType:
     version: str
     status: str
 
-def get_apps() -> List[AppType]:
-    cur = conn.cursor()
-    cur.execute("SELECT id, name, version, status FROM apps")
-    rows = cur.fetchall()
-    cur.close()
-    return [AppType(id=r[0], name=r[1], version=r[2], status=r[3]) for r in rows]
+# Resolver de consultas
+def get_apps_resolver() -> List[AppType]:
+    with SessionLocal() as db:
+        apps = db.query(App).all()
+        return [AppType(id=a.id, name=a.name, version=a.version, status=a.status) for a in apps]
+
 
 @strawberry.type
 class Query:
-    apps: List[AppType] = strawberry.field(resolver=get_apps)
+    apps: List[AppType] = strawberry.field(resolver=get_apps_resolver)
 
-schema = strawberry.Schema(Query)
+
+schema = strawberry.Schema(query=Query)

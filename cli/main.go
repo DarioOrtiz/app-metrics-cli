@@ -77,12 +77,24 @@ func addApp(app App) {
 
 func listApps() {
     url := "http://127.0.0.1:8000/apps/"
-    resp, err := doRequest("GET", url, nil)
+    resp, err := http.Get(url)
     if err != nil {
         fmt.Println("Error:", err)
         return
     }
-    fmt.Println(resp)
+    defer resp.Body.Close()
+    body, _ := ioutil.ReadAll(resp.Body)
+
+    var apps []App
+    if err := json.Unmarshal(body, &apps); err != nil {
+        fmt.Println("Error parseando respuesta:", err)
+        return
+    }
+
+    fmt.Printf("%-5s %-20s %-10s %-10s\n", "ID", "Name", "Version", "Status")
+    for _, app := range apps {
+        fmt.Printf("%-5d %-20s %-10s %-10s\n", app.ID, app.Name, app.Version, app.Status)
+    }
 }
 
 func updateApp(id string, app App) {
@@ -127,4 +139,18 @@ func doRequest(method, url string, data interface{}) (string, error) {
     defer resp.Body.Close()
     body, _ := ioutil.ReadAll(resp.Body)
     return string(body), nil
+}
+
+func validateApp(app App) error {
+    if app.Status != "active" && app.Status != "inactive" {
+        return fmt.Errorf("status debe ser 'active' o 'inactive'")
+    }
+    matched, _ := regexp.MatchString(`^\d+\.\d+(\.\d+)?$`, app.Version)
+    if !matched {
+        return fmt.Errorf("version debe tener formato X.Y o X.Y.Z")
+    }
+    if app.Name == "" {
+        return fmt.Errorf("name no puede estar vacío")
+    }
+    return nil
 }

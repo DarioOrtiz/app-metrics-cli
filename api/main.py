@@ -3,6 +3,9 @@ from sqlalchemy.orm import Session
 from .db import SessionLocal, Base, engine
 from .models import App
 from .schemas import AppCreate, AppRead
+from strawberry.fastapi import GraphQLRouter
+from .graphql import schema
+
 
 app = FastAPI(title="App Metrics CLI API")
 
@@ -50,3 +53,6 @@ def delete_app(app_id: int, db: Session = Depends(get_db)):
     db.delete(db_app)
     db.commit()
     return {"message": f"App con id {app_id} eliminada"}
+
+graphql_app = GraphQLRouter(schema)
+app.include_router(graphql_app, prefix="/graphql")
