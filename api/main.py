@@ -1,40 +1,30 @@
-
-from fastapi import FastAPI
-from strawberry.fastapi import GraphQLRouter
-from .schemas import App      
-from .db import conn          
-from .graphql import schema   
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+from .db import SessionLocal, Base, engine
+from .models import App
+from .schemas import AppCreate, AppRead
 
 app = FastAPI(title="App Metrics CLI API")
 
-@app.post("/apps/")
-def add_app(app: App):
+Base.metadata.create_all(bind=engine)
 
+def get_db():
+    db = SessionLocal()
     try:
-        cur = conn.cursor()
-        cur.execute(
-            "INSERT INTO apps (name, version, status) VALUES (?, ?, ?)",
-            (app.name, app.version, app.status)
-        )
-        conn.commit()
-        return {"message": f"App '{app.name}' agregada exitosamente"}
-    except Exception as e:
-        return {"error": str(e)}
+        yield db
+    finally:
+        db.close()
 
-@app.get("/apps/")
-def list_apps():
+@app.post("/apps/", response_model=AppRead)
+def add_app(app: AppCreate, db: Session = Depends(get_db)):
+    db_app = App(name=app.name, version=app.version, status=app.status)
+    db.add(db_app)
+    db.commit()
+    db.refresh(db_app)
+    return db_app
 
-    try:
-        cur = conn.cursor()
-        cur.execute("SELECT id, name, version, status FROM apps")
-        rows = cur.fetchall()
-        apps = [
-            {"id": r[0], "name": r[1], "version": r[2], "status": r[3]}
-            for r in rows
-        ]
-        return apps
-    except Exception as e:
-        return {"error": str(e)}
 
-graphql_app = GraphQLRouter(schema)
-app.include_router(graphql_app, prefix="/graphql")
+@app.get("/apps/", response_model=list[AppRead])
+def list_apps(db: Session = Depends(get_db)):
+    apps = db.query(App).all()
+    return apps
