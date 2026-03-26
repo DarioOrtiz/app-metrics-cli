@@ -5,6 +5,9 @@ from .models import App
 from .schemas import AppCreate, AppRead
 from strawberry.fastapi import GraphQLRouter
 from .graphql import schema
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 app = FastAPI(title="App Metrics CLI API")
@@ -53,6 +56,13 @@ def delete_app(app_id: int, db: Session = Depends(get_db)):
     db.delete(db_app)
     db.commit()
     return {"message": f"App con id {app_id} eliminada"}
+
+@app.get("/apps/stats")
+def apps_stats(db: Session = Depends(get_db)):
+    total = db.query(App).count()
+    active = db.query(App).filter(App.status=="active").count()
+    inactive = total - active
+    return {"total": total, "active": active, "inactive": inactive}
 
 graphql_app = GraphQLRouter(schema)
 app.include_router(graphql_app, prefix="/graphql")

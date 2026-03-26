@@ -10,17 +10,21 @@ terraform {
 provider "docker" {}
 
 resource "docker_image" "fastapi_image" {
-  name         = "fastapi_app:latest"
+  name = "fastapi_app:latest"
+
   build {
-    context = "../../api"
+    path = "../../api"  
+    # dockerfile = "Dockerfile" 
   }
 }
+
 
 resource "docker_container" "fastapi_container" {
   name  = "fastapi_app"
   image = docker_image.fastapi_image.latest
+
   ports {
-    internal = 8000
-    external = 8000
+    internal = 8080
+    external = 8080
   }
 }
