@@ -1,26 +1,55 @@
-App Metrics CLI API
+# App Metrics CLI API
 
 Servicio backend simple para gestionar información de aplicaciones.
 
-Este proyecto expone una API construida con FastAPI y GraphQL que permite registrar y consultar aplicaciones.
-Puede utilizarse como un pequeño servicio interno para pipelines CI/CD, dashboards o herramientas de monitoreo.
+Este proyecto expone una API construida con **FastAPI** y **GraphQL** que permite registrar y consultar aplicaciones.
+Puede utilizarse como un pequeño servicio interno para **pipelines CI/CD, dashboards o herramientas de monitoreo**.
 
-Tecnologías
-Python 3.12
-FastAPI
-GraphQL (Strawberry)
-SQLite
-Pydantic
-Uvicorn
-Requests (para pruebas)
-Funcionalidades
-Registrar aplicaciones con nombre, versión y estado
-Consultar aplicaciones mediante API REST
-Consultar aplicaciones mediante GraphQL
-Base de datos ligera con SQLite
-Script simple de pruebas automatizadas
-Estructura modular fácil de extender
-Estructura del Proyecto
+---
+
+# Tecnologías
+
+* Python 3.12
+* FastAPI
+* GraphQL (Strawberry)
+* SQLite
+* Pydantic
+* Uvicorn
+* Requests (para pruebas)
+
+---
+
+# Arquitectura
+
+El proyecto sigue una estructura simple basada en capas:
+
+**API Layer (FastAPI)**
+Expone endpoints REST y GraphQL.
+
+**Service Layer**
+Contiene la lógica de negocio.
+
+**Data Layer**
+Gestiona la persistencia de datos mediante SQLite.
+
+Esta estructura modular facilita extender el proyecto agregando nuevos servicios, validaciones o integraciones.
+
+---
+
+# Funcionalidades
+
+* Registrar aplicaciones con nombre, versión y estado
+* Consultar aplicaciones mediante API REST
+* Consultar aplicaciones mediante GraphQL
+* Base de datos ligera con SQLite
+* Script simple de pruebas automatizadas
+* Estructura modular fácil de extender
+
+---
+
+# Estructura del Proyecto
+
+```
 app-metrics-cli/
 │
 ├── api/
@@ -32,50 +61,95 @@ app-metrics-cli/
 ├── test_api.py        # Script de pruebas de la API
 ├── requirements.txt
 └── README.md
-Instalación
+```
+
+---
+
+# Instalación
 
 Clonar el repositorio:
 
+```bash
 git clone https://github.com/DarioOrtiz/app-metrics-cli.git
 cd app-metrics-cli
+```
 
 Crear entorno virtual:
 
+```bash
 python3 -m venv venv
 source venv/bin/activate
+```
 
 Instalar dependencias:
 
+```bash
 pip install fastapi uvicorn strawberry-graphql requests
+```
 
 Inicializar base de datos:
 
+```bash
 python3 -c "from api import db"
+```
 
 Ejecutar la API:
 
+```bash
 uvicorn api.main:app --reload
-Endpoints de la API
-REST
+```
 
-Agregar aplicación
+---
 
-POST /apps/
+# Quick Start
+
+Una vez iniciada la API puedes acceder a:
+
+**Swagger UI**
+
+```
+http://127.0.0.1:8000/docs
+```
+
+Desde allí puedes:
+
+* Crear aplicaciones
+* Consultar aplicaciones registradas
+* Probar los endpoints REST
+
+También puedes probar GraphQL en:
+
+```
+http://127.0.0.1:8000/graphql
+```
+
+---
+
+# Endpoints de la API
+
+## REST
+
+### Agregar aplicación
+
+POST `/apps/`
 
 Ejemplo de request:
 
+```json
 {
   "name": "MiApp",
   "version": "1.0",
   "status": "active"
 }
+```
 
-Listar aplicaciones
+### Listar aplicaciones
 
-GET /apps/
+GET `/apps/`
 
 Ejemplo de respuesta:
 
+```json
 [
   {
     "id": 1,
@@ -84,14 +158,37 @@ Ejemplo de respuesta:
     "status": "active"
   }
 ]
-GraphQL
+```
+
+---
+
+# Ejemplo usando curl
+
+Crear una aplicación desde terminal:
+
+```bash
+curl -X POST http://127.0.0.1:8000/apps/ \
+-H "Content-Type: application/json" \
+-d '{
+"name": "TestApp",
+"version": "1.0",
+"status": "active"
+}'
+```
+
+---
+
+# GraphQL
 
 Endpoint:
 
+```
 POST /graphql
+```
 
 Ejemplo de consulta:
 
+```graphql
 query {
   apps {
     id
@@ -100,26 +197,41 @@ query {
     status
   }
 }
+```
 
 Playground disponible en:
 
+```
 http://127.0.0.1:8000/graphql
-Pruebas Automatizadas
+```
+
+---
+
+# Pruebas Automatizadas
 
 El proyecto incluye un script de pruebas:
 
+```
 test_api.py
+```
 
 Este script realiza:
 
-Creación de aplicaciones
-Consulta de aplicaciones vía REST
-Consulta de aplicaciones vía GraphQL
+* Creación de aplicaciones
+* Consulta de aplicaciones vía REST
+* Consulta de aplicaciones vía GraphQL
 
-## Posibles mejoras futuras
+Para ejecutarlo:
 
-- Integración con PostgreSQL en lugar de SQLite para producción.
-- Autenticación y autorización mediante JWT.
-- Dockerización del servicio para facilitar despliegue y entornos consistentes.
-- Métricas y monitoreo con Prometheus.
-- Integración en pipelines CI/CD para despliegue automático y pruebas.
+```bash
+python test_api.py
+```
+
+---
+
+# Posibles mejoras futuras
+
+* Autenticación y autorización mediante JWT.
+* Dockerización del servicio para facilitar despliegue y entornos consistentes.
+* Métricas y monitoreo con Prometheus.
+* Integración en pipelines CI/CD para despliegue automático y pruebas.
