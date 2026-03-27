@@ -31,7 +31,7 @@ Expone endpoints REST y GraphQL.
 Contiene la lógica de negocio.
 
 **Data Layer**
-Gestiona la persistencia de datos mediante SQLite.
+- Gestiona la persistencia de datos mediante PostgreSQL, garantizando almacenamiento confiable y consultas eficientes
 
 Esta estructura modular facilita extender el proyecto agregando nuevos servicios, validaciones o integraciones.
 
