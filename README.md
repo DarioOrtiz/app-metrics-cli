@@ -42,7 +42,7 @@ Esta estructura modular facilita extender el proyecto agregando nuevos servicios
 * Registrar aplicaciones con nombre, versión y estado
 * Consultar aplicaciones mediante API REST
 * Consultar aplicaciones mediante GraphQL
-* Base de datos ligera con SQLite
+* Base de datos: PostgreSQL, gestionada vía SQLAlchemy ORM
 * Script simple de pruebas automatizadas
 * Estructura modular fácil de extender
 
