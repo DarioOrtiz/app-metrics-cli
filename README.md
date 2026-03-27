@@ -207,25 +207,58 @@ http://127.0.0.1:8000/graphql
 
 ---
 
-# Pruebas Automatizadas
+## Pruebas Automatizadas
 
-El proyecto incluye un script de pruebas:
+El proyecto incluye varias formas de validar el funcionamiento de la API y comprobar que los endpoints funcionan correctamente.
 
-```
+### 1. Script de pruebas general
+
+Archivo:
+
 test_api.py
-```
 
-Este script realiza:
+Este script realiza pruebas básicas sobre la API, incluyendo:
 
-* Creación de aplicaciones
-* Consulta de aplicaciones vía REST
-* Consulta de aplicaciones vía GraphQL
+- Creación de aplicaciones
+- Consulta de aplicaciones vía REST
+- Consulta de aplicaciones vía GraphQL
 
 Para ejecutarlo:
 
-```bash
 python test_api.py
-```
+
+### 2. Prueba de integración
+
+Archivo:
+
+tests/test_app.py
+
+Este script utiliza la librería requests para interactuar con la API en ejecución y realiza:
+
+- Creación de aplicaciones
+- Consulta de aplicaciones vía REST
+
+Para ejecutarlo, primero asegúrate de que la API esté corriendo y luego ejecuta:
+
+python tests/test_app.py
+
+### 3. Pruebas con FastAPI TestClient
+
+Archivo:
+
+tests/test_main.py
+
+Estas pruebas utilizan TestClient de FastAPI para validar los endpoints directamente dentro de la aplicación. Se verifican aspectos como:
+
+- Creación de aplicaciones
+- Consulta de aplicaciones
+- Respuestas correctas de la API
+
+Para ejecutarlas:
+
+pytest
+
+Estas pruebas permiten validar rápidamente que la API funciona correctamente y facilitan futuras ampliaciones del proyecto.
 
 ---
 
