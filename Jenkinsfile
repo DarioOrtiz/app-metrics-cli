@@ -10,31 +10,48 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/DarioOrtiz/app-metrics-cli.git'
+                echo 'Clonando repositorio...'
+                checkout([$class: 'GitSCM',
+                          branches: [[name: 'main']],
+                          userRemoteConfigs: [[url: 'https://github.com/DarioOrtiz/app-metrics-cli.git']]
+                ])
             }
         }
 
         stage('Build Docker API') {
             steps {
                 echo 'Construyendo imagen Docker de la API...'
-                sh "sudo docker build -t ${DOCKER_IMAGE} ./api"
+                sh """
+                    if ! docker info > /dev/null 2>&1; then
+                        echo 'Docker no disponible o sin permisos'
+                        exit 1
+                    fi
+                    docker build -t ${DOCKER_IMAGE} ./api
+                """
             }
         }
 
         stage('Start API Container') {
             steps {
                 echo 'Levantando contenedor Docker de la API...'
-                sh "sudo docker run -d -p 8000:8000 --name ${DOCKER_CONTAINER} ${DOCKER_IMAGE}"
-                sh "sleep 5"
+                sh """
+                    docker rm -f ${DOCKER_CONTAINER} || true
+                    docker run -d -p 8000:8000 --name ${DOCKER_CONTAINER} ${DOCKER_IMAGE}
+                    sleep 5
+                """
             }
         }
 
         stage('Setup Python') {
             steps {
-                echo 'Creando entorno virtual e instalando dependencias...'
-                sh "python3 -m venv ${VENV_DIR}"
-                sh ". ${VENV_DIR}/bin/activate && pip install --upgrade pip"
-                sh ". ${VENV_DIR}/bin/activate && pip install -r requirements.txt pytest requests"
+                echo 'Creando entorno virtual y instalando dependencias...'
+                sh """
+                    python3 -m venv ${VENV_DIR}
+                    source ${VENV_DIR}/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                    pip install pytest requests
+                """
             }
         }
 
@@ -42,7 +59,7 @@ pipeline {
             steps {
                 echo 'Ejecutando tests...'
                 sh """
-                    . ${VENV_DIR}/bin/activate
+                    source ${VENV_DIR}/bin/activate
                     pytest ./tests/
                 """
             }
@@ -52,8 +69,8 @@ pipeline {
     post {
         always {
             echo 'Pipeline terminado, limpiando contenedores...'
-            sh "sudo docker stop ${DOCKER_CONTAINER} || true"
-            sh "sudo docker rm ${DOCKER_CONTAINER} || true"
+            sh "docker stop ${DOCKER_CONTAINER} || true"
+            sh "docker rm ${DOCKER_CONTAINER} || true"
         }
         success {
             echo 'Build y tests completados correctamente.'
