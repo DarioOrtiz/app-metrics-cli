@@ -12,7 +12,8 @@ Puede utilizarse como un pequeño servicio interno para **pipelines CI/CD, dashb
 * Python 3.12
 * FastAPI
 * GraphQL (Strawberry)
-* SQLite
+* PostgreSQL
+* Terraform (IaC para desplegar contenedores)
 * Pydantic
 * Uvicorn
 * Requests (para pruebas)
