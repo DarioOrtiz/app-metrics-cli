@@ -55,7 +55,7 @@ app-metrics-cli/
 │
 ├── api/
 │   ├── main.py        # Aplicación FastAPI
-│   ├── db.py          # Inicialización de SQLite
+│   ├── db.py          # Inicialización de PostgreSQL
 │   └── models.py      # Modelos de datos
 │
 ├── services/          # Lógica de negocio
