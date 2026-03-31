@@ -87,11 +87,21 @@ Instalar dependencias:
 ```bash
 pip install fastapi uvicorn strawberry-graphql requests
 ```
+Instalar PostgreSQL (Ubuntu/Debian):
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+
+Crear base de datos y usuario:
+sudo -u postgres psql
+CREATE DATABASE app_metrics_db;
+CREATE USER dario WITH ENCRYPTED PASSWORD 'metrics1234';
+GRANT ALL PRIVILEGES ON DATABASE app_metrics_db TO dario;
+\q
 
 Inicializar base de datos:
 
 ```bash
-python3 -c "from api import db"
+python3 -c "from api import db; db.Base.metadata.create_all(bind=db.engine)"
 ```
 
 Ejecutar la API:
